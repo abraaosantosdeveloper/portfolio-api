@@ -48,6 +48,9 @@ public class Project {
     private String color;
 
     @Builder.Default
+    private List<String> tags = new ArrayList<>();
+
+    @Builder.Default
     private List<ProjectImage> images = new ArrayList<>();
 
     private String repoUrl;
