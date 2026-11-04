@@ -1,0 +1,28 @@
+# Controle de versão
+.git
+.gitignore
+
+# Segredos e configuração local (NUNCA devem entrar na imagem)
+.env
+.env.*
+
+# Build local e dependências geradas
+target/
+
+# IDEs
+.idea/
+.vscode/
+*.iml
+.classpath
+.project
+.settings/
+
+# Docker e documentação
+Dockerfile
+.dockerignore
+compose.yaml
+*.md
+
+# Lixo do sistema
+.DS_Store
+Thumbs.db
