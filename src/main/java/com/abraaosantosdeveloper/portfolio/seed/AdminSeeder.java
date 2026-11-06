@@ -26,7 +26,7 @@ private final UserRepository users;
             throw new IllegalStateException(
                 "APP_ADMIN_PASSWORD_HASH precisa ser um hash bcrypt ($2a$, $2b$ ou $2y$)");
         }
-        users.findByUserName(admin.username()).ifPresentOrElse(user -> {
+        users.findByUsername(admin.username()).ifPresentOrElse(user -> {
             if (!user.getPasswordHash().equals(admin.passwordHash())) {
                 user.setPasswordHash(admin.passwordHash());
                 users.save(user);
