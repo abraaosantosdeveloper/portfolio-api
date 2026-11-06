@@ -89,6 +89,7 @@
     <p class="selo">Portfólio &middot; admin</p>
     <h1>Entrar</h1>
 
+    <p class="aviso erro" th:if="${param.bloqueado}">Muitas tentativas erradas. Tente novamente em 15 minutos.</p>
     <p class="aviso erro" th:if="${param.erro}">Usuário ou senha inválidos.</p>
     <p class="aviso ok" th:if="${param.saiu}">Você saiu do painel.</p>
 

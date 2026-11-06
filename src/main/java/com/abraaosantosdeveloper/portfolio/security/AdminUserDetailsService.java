@@ -19,7 +19,7 @@ public class AdminUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return users.findByUsername(username)
             .map(user -> org.springframework.security.core.userdetails.User
-                .withUsername(user.getUserName())
+                .withUsername(user.getUsername())
                 .password(user.getPasswordHash())
                 .roles("ADMIN")
                 .build())

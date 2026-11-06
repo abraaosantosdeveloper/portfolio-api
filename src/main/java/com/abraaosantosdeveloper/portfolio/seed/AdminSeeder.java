@@ -34,7 +34,7 @@ private final UserRepository users;
             }
         }, () -> {
             users.save(User.builder()
-                .userName(admin.username())
+                .username(admin.username())
                 .passwordHash(admin.passwordHash())
                 .build());
             log.info("Admin '{}' criado", admin.username());

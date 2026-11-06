@@ -10,6 +10,10 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import com.abraaosantosdeveloper.portfolio.security.LoginAttemptFilter;
+import com.abraaosantosdeveloper.portfolio.security.LoginAttemptService;
 
 @Configuration
 @EnableWebSecurity
@@ -22,9 +26,10 @@ public class SecurityConfig {
 
     @Bean
     @Order(1)
-    public SecurityFilterChain adminChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain adminChain(HttpSecurity http, LoginAttemptService attempts) throws Exception {
         http
             .securityMatcher("/admin/**")
+            .addFilterBefore(new LoginAttemptFilter(attempts), UsernamePasswordAuthenticationFilter.class)
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/admin/login", "/admin/css/**", "/admin/img/**").permitAll()
                 .anyRequest().authenticated())
