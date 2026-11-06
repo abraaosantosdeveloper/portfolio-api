@@ -19,6 +19,10 @@ app:
     password-hash: ${APP_ADMIN_PASSWORD_HASH}
   cors:
     allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:5173}
+  mail:
+    resend-api-key: ${RESEND_API_KEY:}
+    from: ${MAIL_FROM:onboarding@resend.dev}
+    to: ${CONTACT_TO_EMAIL:}
 
 cloudinary:
   base-folder: ${CLOUDINARY_BASE_FOLDER:PortfolioPrints}

@@ -35,6 +35,9 @@ public class TimelinePhase {
     private String institution;
 
     @Builder.Default
+    private List<String> highlights = new ArrayList<>();
+
+    @Builder.Default
     private List<String> technologies = new ArrayList<>();
 
     private LocalDate startDate;
