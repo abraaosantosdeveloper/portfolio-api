@@ -6,7 +6,13 @@ spring:
 
 server:
   port: ${PORT:8080}
-
+  servlet:
+    session:
+      cookie:
+        http-only: true
+        secure: ${SESSION_COOKIE_SECURE:true}
+        same-site: lax
+        
 management:
   endpoints:
     web:
