@@ -82,6 +82,7 @@ class ProjectAdminTest {
                 .param("description", "Descrição curta")
                 .param("icon", "code")
                 .param("color", "menta-2")
+                .param("tags", "Java, Spring Boot")
                 .param("slug", "slug-forjado")
                 .param("authorId", "000000000000000000000001")
                 .with(csrf()))
