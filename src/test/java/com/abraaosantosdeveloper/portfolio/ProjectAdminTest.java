@@ -7,7 +7,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrlPattern;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
@@ -83,6 +82,7 @@ class ProjectAdminTest {
                 .param("description", "Descrição curta")
                 .param("icon", "code")
                 .param("color", "menta-2")
+                .param("tags", "Java, Spring Boot")
                 .param("slug", "slug-forjado")
                 .param("authorId", "000000000000000000000001")
                 .with(csrf()))
@@ -166,6 +166,6 @@ class ProjectAdminTest {
     @WithAnonymousUser
     void semLoginVaiParaATelaDeLogin() throws Exception {
         mvc.perform(get("/admin/projetos"))
-            .andExpect(redirectedUrlPattern("**/admin/login"));
+            .andExpect(redirectedUrl("/admin/login"));
     }
 }

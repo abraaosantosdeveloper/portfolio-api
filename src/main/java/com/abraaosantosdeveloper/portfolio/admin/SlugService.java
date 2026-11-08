@@ -38,13 +38,39 @@ public class SlugService {
         }
         String semAcento = Normalizer.normalize(title, Normalizer.Form.NFD)
             .replaceAll("\\p{M}+", "");
-        String slug = semAcento.toLowerCase(Locale.ROOT)
-            .replaceAll("[^a-z0-9]+", "-")
-            .replaceAll("^-+|-+$", "");
+        String slug = toSlugChars(semAcento.toLowerCase(Locale.ROOT));
         if (slug.length() > MAX_LENGTH) {
-            slug = slug.substring(0, MAX_LENGTH).replaceAll("-+$", "");
+            slug = trimDashes(slug.substring(0, MAX_LENGTH));
         }
         return slug.isEmpty() ? FALLBACK : slug;
+    }
+
+    private static String toSlugChars(String text) {
+        var slug = new StringBuilder(text.length());
+        boolean lastWasDash = false;
+        for (int i = 0; i < text.length(); i++) {
+            char c = text.charAt(i);
+            if ((c >= 'a' && c <= 'z') || (c >= '0' && c <= '9')) {
+                slug.append(c);
+                lastWasDash = false;
+            } else if (!lastWasDash) {
+                slug.append('-');
+                lastWasDash = true;
+            }
+        }
+        return trimDashes(slug.toString());
+    }
+
+    private static String trimDashes(String text) {
+        int start = 0;
+        int end = text.length();
+        while (start < end && text.charAt(start) == '-') {
+            start++;
+        }
+        while (end > start && text.charAt(end - 1) == '-') {
+            end--;
+        }
+        return text.substring(start, end);
     }
 
     private boolean isTaken(String slug, String currentId) {
