@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{admin/fragments/layout :: head(${projetoId} != null ? 'Editar projeto' : 'Novo projeto')}"></head>
+<body>
+<div class="app">
+
+  <nav th:replace="~{admin/fragments/layout :: menu('projetos')}"></nav>
+
+  <main class="conteudo">
+    <div class="topo">
+      <h1 th:text="${projetoId} != null ? 'Editar projeto' : 'Novo projeto'">Novo projeto</h1>
+      <a class="botao" th:href="@{/admin/projetos}">Voltar</a>
+    </div>
+
+    <div class="cartao" style="padding: 20px;">
+      <form th:object="${form}" method="post" th:action="${projetoId} != null ? @{/admin/projetos/{id}(id=${projetoId})} : @{/admin/projetos}">
+        <p class="aviso erro" th:if="${#fields.hasAnyErrors()}" role="alert">
+          Verifique os campos destacados e tente novamente.
+        </p>
+        <p style="margin-top:0;">
+          <label for="title">Projeto</label><br>
+          <input id="title" type="text" th:field="*{title}" maxlength="100" required style="width:100%;margin-top:6px;">
+        </p>
+
+        <p>
+          <label for="description">Descrição curta</label><br>
+          <input id="description" type="text" th:field="*{description}" maxlength="120" required style="width:100%;margin-top:6px;">
+        </p>
+
+        <p>
+          <label for="year">Ano</label><br>
+          <input id="year" type="number" th:field="*{year}" min="2000" max="2100" required style="width:180px;margin-top:6px;">
+        </p>
+
+        <p>
+          <label for="status">Status</label><br>
+          <select id="status" th:field="*{status}" style="margin-top:6px;">
+            <option th:each="statusItem : ${statuses}" th:value="${statusItem}" th:text="${statusItem}">IN_PROGRESS</option>
+          </select>
+        </p>
+
+        <p>
+          <label for="icon">Ícone</label><br>
+          <select id="icon" th:field="*{icon}" style="margin-top:6px;">
+            <option th:each="icone : ${icones}" th:value="${icone.id}" th:text="${icone.label}">API / código</option>
+          </select>
+        </p>
+
+        <p>
+          <label for="color">Cor</label><br>
+          <select id="color" th:field="*{color}" style="margin-top:6px;">
+            <optgroup th:each="grupo : ${coresPorFamilia}" th:label="${grupo.key}">
+              <option th:each="cor : ${grupo.value}" th:value="${cor.id}" th:text="${cor.label}">Menta médio</option>
+            </optgroup>
+          </select>
+        </p>
+
+        <p>
+          <label for="tags">Tags (separadas por vírgula)</label><br>
+          <input id="tags" type="text" th:field="*{tags}" maxlength="300" style="width:100%;margin-top:6px;">
+        </p>
+
+        <p>
+          <label for="problem">Problema</label><br>
+          <textarea id="problem" th:field="*{problem}" rows="4" maxlength="2000" style="width:100%;margin-top:6px;"></textarea>
+        </p>
+
+        <p>
+          <label for="solution">Solução</label><br>
+          <textarea id="solution" th:field="*{solution}" rows="4" maxlength="2000" style="width:100%;margin-top:6px;"></textarea>
+        </p>
+
+        <p>
+          <label for="repoUrl">Repositório</label><br>
+          <input id="repoUrl" type="url" th:field="*{repoUrl}" maxlength="300" style="width:100%;margin-top:6px;">
+        </p>
+
+        <p>
+          <label for="liveUrl">URL publicada</label><br>
+          <input id="liveUrl" type="url" th:field="*{liveUrl}" maxlength="300" style="width:100%;margin-top:6px;">
+        </p>
+
+        <p>
+          <label>
+            <input type="checkbox" th:field="*{published}"> Publicado
+          </label>
+        </p>
+
+        <button class="botao" type="submit">Salvar projeto</button>
+      </form>
+    </div>
+  </main>
+
+</div>
+</body>
+</html>

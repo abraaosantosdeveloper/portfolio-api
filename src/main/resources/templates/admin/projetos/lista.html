@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{admin/fragments/layout :: head('Projetos')}"></head>
+<body>
+<div class="app">
+
+  <nav th:replace="~{admin/fragments/layout :: menu('projetos')}"></nav>
+
+  <main class="conteudo">
+    <div class="topo">
+      <h1>Projetos</h1>
+      <a class="botao" th:href="@{/admin/projetos/novo}">Novo projeto</a>
+    </div>
+
+    <p class="aviso ok" th:if="${param.salvo}">Projeto salvo.</p>
+
+    <div class="cartao" th:if="${#lists.isEmpty(projetos)}">
+      <div class="vazio">
+        <h2>Nenhum projeto ainda</h2>
+        <p>Cadastre o primeiro projeto para ele aparecer no site assim que for publicado.</p>
+        <a class="botao" th:href="@{/admin/projetos/novo}">Criar primeiro projeto</a>
+      </div>
+    </div>
+
+    <div class="cartao" th:unless="${#lists.isEmpty(projetos)}">
+      <table>
+        <thead>
+          <tr>
+            <th>Projeto</th>
+            <th>Ano</th>
+            <th>Status</th>
+            <th>Situação</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr th:each="p : ${projetos}">
+            <td>
+              <a th:href="@{/admin/projetos/{id}(id=${p.id})}" th:text="${p.title}">Nome do projeto</a>
+              <span class="sub" th:text="${p.slug}">slug-do-projeto</span>
+            </td>
+            <td th:text="${p.year}">2026</td>
+            <td>
+              <span class="selo"
+                    th:text="${p.status == null ? '-' :
+                               (p.status.name() == 'PRODUCTION' ? 'Em produção' :
+                               (p.status.name() == 'IN_PROGRESS' ? 'Em andamento' : 'Arquivado'))}">Em produção</span>
+            </td>
+            <td>
+              <span class="selo"
+                    th:classappend="${p.published} ? 'publicado' : 'rascunho'"
+                    th:text="${p.published} ? 'Publicado' : 'Rascunho'">Publicado</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+
+</div>
+</body>
+</html>
