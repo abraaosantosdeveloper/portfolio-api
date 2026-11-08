@@ -35,3 +35,9 @@ build/
 ### Environment ###
 .env
 app.log
+
+### Gen AI ###
+
+Claude*
+Claude.*
+.Claude
