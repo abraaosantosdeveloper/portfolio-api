@@ -31,7 +31,7 @@ public class SecurityConfig {
             .securityMatcher("/admin/**")
             .addFilterBefore(new LoginAttemptFilter(attempts), UsernamePasswordAuthenticationFilter.class)
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/admin/login", "/admin/css/**", "/admin/img/**").permitAll()
+                .requestMatchers("/admin/login", "/admin/css/**", "/admin/js/**", "/admin/img/**").permitAll()
                 .anyRequest().authenticated())
             .formLogin(form -> form
                 .loginPage("/admin/login")
@@ -55,6 +55,8 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET, "/api/site").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/contact").permitAll()
                 .requestMatchers("/actuator/health").permitAll()
+                // /error precisa ser liberado, senão todo 404/500 vira 403 e esconde o erro real
+                .requestMatchers("/error").permitAll()
                 .anyRequest().denyAll());
         return http.build();
     }
