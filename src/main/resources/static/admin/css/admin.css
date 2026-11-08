@@ -1,0 +1,176 @@
+:root {
+  --fundo: #F5F8F6;
+  --superficie: #FFFFFF;
+  --texto: #13201A;
+  --texto-2: #55635B;
+  --linha: #DDE5E0;
+  --destaque: #0F7B5F;
+  --destaque-escuro: #0A5442;
+  --destaque-suave: #DDF1EA;
+  --erro: #D9503F;
+  --erro-suave: #FDECEA;
+  --ambar: #C47F0E;
+  --ambar-suave: #FFF3DC;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--fundo);
+  color: var(--texto);
+  font-family: 'Manrope', Arial, Helvetica, sans-serif;
+  line-height: 1.5;
+}
+
+a { color: var(--destaque); }
+
+/* ---------- Estrutura ---------- */
+.app {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  min-height: 100vh;
+}
+
+.menu {
+  background: var(--superficie);
+  border-right: 1px solid var(--linha);
+  padding: 24px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.menu .marca {
+  margin: 0 0 20px 8px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--destaque);
+}
+
+.menu a {
+  display: block;
+  padding: 10px 12px;
+  border-radius: 10px;
+  color: var(--texto-2);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.menu a:hover { background: var(--fundo); color: var(--texto); }
+.menu a.ativo { background: var(--destaque-suave); color: var(--destaque-escuro); }
+
+.menu form { margin-top: auto; }
+.menu .sair {
+  width: 100%;
+  padding: 10px 12px;
+  font: inherit;
+  font-weight: 600;
+  text-align: left;
+  color: var(--texto-2);
+  background: none;
+  border: 0;
+  border-radius: 10px;
+  cursor: pointer;
+}
+.menu .sair:hover { background: var(--erro-suave); color: var(--erro); }
+
+.conteudo {
+  padding: 32px;
+  max-width: 960px;
+  width: 100%;
+}
+
+.topo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+.topo h1 { margin: 0; font-size: 26px; font-weight: 800; }
+
+/* ---------- Botões (efeito 3D) ---------- */
+.botao {
+  display: inline-block;
+  padding: 11px 18px;
+  font: inherit;
+  font-weight: 800;
+  color: #FFFFFF;
+  text-decoration: none;
+  background: var(--destaque);
+  border: 0;
+  border-radius: 12px;
+  cursor: pointer;
+  box-shadow: 0 5px 0 var(--destaque-escuro);
+  transition: transform .08s, box-shadow .08s;
+}
+.botao:active { transform: translateY(3px); box-shadow: 0 2px 0 var(--destaque-escuro); }
+
+/* ---------- Cartões e tabela ---------- */
+.cartao {
+  background: var(--superficie);
+  border: 1px solid var(--linha);
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+table { width: 100%; border-collapse: collapse; }
+th, td { padding: 14px 18px; text-align: left; }
+th {
+  font-size: 12px;
+  letter-spacing: .5px;
+  text-transform: uppercase;
+  color: var(--texto-2);
+  border-bottom: 1px solid var(--linha);
+}
+td { border-bottom: 1px solid var(--linha); }
+tr:last-child td { border-bottom: 0; }
+td .sub { display: block; font-size: 13px; color: var(--texto-2); }
+
+/* ---------- Selos ---------- */
+.selo {
+  display: inline-block;
+  padding: 3px 10px;
+  font-size: 12px;
+  font-weight: 800;
+  border-radius: 999px;
+  background: var(--fundo);
+  color: var(--texto-2);
+}
+.selo.publicado { background: var(--destaque-suave); color: var(--destaque-escuro); }
+.selo.rascunho { background: var(--ambar-suave); color: var(--ambar); }
+
+/* ---------- Estado vazio e avisos ---------- */
+.vazio { padding: 56px 24px; text-align: center; }
+.vazio h2 { margin: 0 0 8px 0; font-size: 20px; }
+.vazio p { margin: 0 0 20px 0; color: var(--texto-2); }
+
+.aviso {
+  margin: 0 0 16px 0;
+  padding: 12px 14px;
+  border-radius: 10px;
+  font-size: 14px;
+}
+.aviso.ok { background: var(--destaque-suave); color: var(--destaque-escuro); }
+.aviso.erro { background: var(--erro-suave); color: #A3372A; }
+
+/* ---------- Celular ---------- */
+@media (max-width: 760px) {
+  .app { grid-template-columns: 1fr; }
+  .menu {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    border-right: 0;
+    border-bottom: 1px solid var(--linha);
+    padding: 12px 16px;
+  }
+  .menu .marca { width: 100%; margin: 0 0 4px 0; }
+  .menu form { margin: 0 0 0 auto; }
+  .conteudo { padding: 20px 16px; }
+  .topo { flex-wrap: wrap; }
+  th:nth-child(n+3), td:nth-child(n+3) { display: none; }
+}

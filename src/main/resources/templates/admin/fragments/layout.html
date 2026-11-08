@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="head(titulo)">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title th:text="${titulo} + ' · Admin do portfólio'">Admin do portfólio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" th:href="@{/admin/css/admin.css}">
+</head>
+<body>
+
+<nav class="menu" th:fragment="menu(ativo)">
+  <p class="marca">Portfólio &middot; admin</p>
+  <a th:href="@{/admin/projetos}" th:classappend="${ativo == 'projetos'} ? 'ativo'">Projetos</a>
+  <a th:href="@{/admin/stack}" th:classappend="${ativo == 'stack'} ? 'ativo'">Stack</a>
+  <a th:href="@{/admin/trajetoria}" th:classappend="${ativo == 'trajetoria'} ? 'ativo'">Trajetória</a>
+  <form th:action="@{/admin/logout}" method="post">
+    <button class="sair" type="submit">Sair</button>
+  </form>
+</nav>
+
+</body>
+</html>
