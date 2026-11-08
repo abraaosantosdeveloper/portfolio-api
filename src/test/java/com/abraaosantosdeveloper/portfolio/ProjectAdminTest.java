@@ -28,8 +28,8 @@ import com.abraaosantosdeveloper.portfolio.domain.user.User;
 import com.abraaosantosdeveloper.portfolio.domain.user.UserRepository;
 
 @SpringBootTest(properties = {
-    "app.admin.username=test-admin",
-    "app.admin.password-hash=$2y$12$testtesttesttesttesttesttesttesttesttesttesttesttesttes"
+        "app.admin.username=test-admin",
+        "app.admin.password-hash=$2y$12$testtesttesttesttesttesttesttesttesttesttesttesttesttes"
 })
 @AutoConfigureMockMvc
 @Import(TestcontainersConfiguration.class)
@@ -59,14 +59,14 @@ class ProjectAdminTest {
 
     private ResultActions salvar(String title, boolean publicado) throws Exception {
         var request = post("/admin/projetos")
-            .param("title", title)
-            .param("year", "2026")
-            .param("status", "PRODUCTION")
-            .param("description", "Descrição curta do projeto")
-            .param("icon", "code")
-            .param("color", "menta-2")
-            .param("tags", "Java, Spring Boot")
-            .with(csrf());
+                .param("title", title)
+                .param("year", "2026")
+                .param("status", "PRODUCTION")
+                .param("description", "Descrição curta do projeto")
+                .param("icon", "code")
+                .param("color", "menta-2")
+                .param("tags", "Java, Spring Boot")
+                .with(csrf());
         if (publicado) {
             request.param("published", "true");
         }
@@ -86,7 +86,7 @@ class ProjectAdminTest {
                 .param("slug", "slug-forjado")
                 .param("authorId", "000000000000000000000001")
                 .with(csrf()))
-            .andExpect(redirectedUrl("/admin/projetos?salvo"));
+                .andExpect(redirectedUrl("/admin/projetos?salvo"));
 
         var project = projects.findBySlug("sistema-de-chamados-agil").orElseThrow();
         var autorEsperado = users.findByUsername("test-admin").orElseThrow().getId();
@@ -113,16 +113,17 @@ class ProjectAdminTest {
 
         // Esta chamada guarda a resposta no cache, ainda sem projetos publicados
         mvc.perform(get("/api/site"))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.projects.length()").value(0));
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.projects.length()").value(0));
 
-        // Salvar um publicado precisa esvaziar o cache, ou a próxima chamada viria velha
+        // Salvar um publicado precisa esvaziar o cache, ou a próxima chamada viria
+        // velha
         salvar("Publicado", true);
 
         mvc.perform(get("/api/site"))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.projects.length()").value(1))
-            .andExpect(jsonPath("$.projects[0].slug").value("publicado"));
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.projects.length()").value(1))
+                .andExpect(jsonPath("$.projects[0].slug").value("publicado"));
     }
 
     @Test
@@ -135,9 +136,9 @@ class ProjectAdminTest {
                 .param("icon", "nao-existe")
                 .param("color", "menta-2")
                 .with(csrf()))
-            .andExpect(status().isOk())
-            .andExpect(view().name("admin/projetos/form"))
-            .andExpect(model().attributeHasFieldErrors("form", "title", "description", "iconValid"));
+                .andExpect(status().isOk())
+                .andExpect(view().name("admin/projetos/form"))
+                .andExpect(model().attributeHasFieldErrors("form", "title", "description", "iconValid"));
 
         assertThat(projects.count()).isZero();
     }
@@ -155,7 +156,7 @@ class ProjectAdminTest {
                 .param("icon", "code")
                 .param("color", "menta-2")
                 .with(csrf()))
-            .andExpect(redirectedUrl("/admin/projetos?salvo"));
+                .andExpect(redirectedUrl("/admin/projetos?salvo"));
 
         var project = projects.findById(id).orElseThrow();
         assertThat(project.getTitle()).isEqualTo("Título Novo");
@@ -166,6 +167,6 @@ class ProjectAdminTest {
     @WithAnonymousUser
     void semLoginVaiParaATelaDeLogin() throws Exception {
         mvc.perform(get("/admin/projetos"))
-            .andExpect(redirectedUrl("/admin/login"));
+                .andExpect(redirectedUrl("/admin/login"));
     }
 }

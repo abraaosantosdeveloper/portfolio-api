@@ -18,6 +18,9 @@ import com.abraaosantosdeveloper.portfolio.domain.project.ProjectStatus;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
 @Controller
 @RequiredArgsConstructor
 public class ProjectAdminController {
@@ -43,6 +46,18 @@ public class ProjectAdminController {
     @ModelAttribute("statuses")
     public ProjectStatus[] statuses() {
         return ProjectStatus.values();
+    }
+
+        @ModelAttribute("coresPorId")
+    public Map<String, ProjectCatalog.Color> coresPorId() {
+        return ProjectCatalog.COLORS.stream()
+            .collect(Collectors.toMap(ProjectCatalog.Color::id, Function.identity()));
+    }
+
+    @ModelAttribute("iconesPorId")
+    public Map<String, ProjectCatalog.Icon> iconesPorId() {
+        return ProjectCatalog.ICONS.stream()
+            .collect(Collectors.toMap(ProjectCatalog.Icon::id, Function.identity()));
     }
 
     // ---------- Lista ----------
