@@ -20,7 +20,7 @@
       <button type="button" class="btn btn--secundario btn--44" data-nova-categoria>+ Nova categoria</button>
     </div>
 
-    <div th:replace="~{admin/fragments/layout :: toast(${param.salvo != null} ? 'Stack salva. O site já mostra a versão nova.' : null, 'ok')}"></div>
+    <th:block th:if="${param.salvo}"><div th:replace="~{admin/fragments/layout :: toast('Stack salva. O site já mostra a versão nova.', 'ok')}"></div></th:block>
     <div th:replace="~{admin/fragments/layout :: toast(${erro}, 'erro')}"></div>
 
     <!--

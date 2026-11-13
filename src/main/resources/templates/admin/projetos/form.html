@@ -22,7 +22,7 @@
     <h1 class="cabecalho__titulo migalhas__titulo" th:text="${novo} ? 'Novo projeto' : 'Editar projeto'">Novo projeto</h1>
     <p class="slug mono" th:if="${slug != null}" th:text="|/${slug}|">/slug-do-projeto</p>
 
-    <div th:replace="~{admin/fragments/layout :: toast(${#fields.hasErrors('${form.*}')} ? 'Corrija os campos destacados e salve de novo.' : null, 'erro')}"></div>
+    <th:block th:if="${#fields.hasErrors('${form.*}')}"><div th:replace="~{admin/fragments/layout :: toast('Corrija os campos destacados e salve de novo.', 'erro')}"></div></th:block>
 
     <div class="grade-lateral grade-lateral--380">
 
