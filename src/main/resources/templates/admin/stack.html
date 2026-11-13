@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{admin/fragments/layout :: head('Stack')}">
+  <meta charset="UTF-8">
+  <title>Stack · abraao.dev / admin</title>
+  <link rel="stylesheet" href="../../static/admin/css/admin.css">
+</head>
+<body>
+<div class="app">
+
+  <aside th:replace="~{admin/fragments/layout :: lateral('stack')}"></aside>
+
+  <main class="conteudo">
+
+    <div class="cabecalho">
+      <div>
+        <h1 class="cabecalho__titulo">Stack</h1>
+        <p class="cabecalho__sub">Tire o que não usa mais e adicione o que entrou na rotina. A ordem aqui é a ordem no site.</p>
+      </div>
+      <button type="button" class="btn btn--secundario btn--44" data-nova-categoria>+ Nova categoria</button>
+    </div>
+
+    <div th:replace="~{admin/fragments/layout :: toast(${param.salvo != null} ? 'Stack salva. O site já mostra a versão nova.' : null, 'ok')}"></div>
+    <div th:replace="~{admin/fragments/layout :: toast(${erro}, 'erro')}"></div>
+
+    <!--
+      Envio: POST /admin/stack
+        categorias[i].id      (vazio = categoria nova)
+        categorias[i].title   (vazio = apagar a categoria)
+        categorias[i].items   (repetido, um por tecnologia; ausente = categoria sem itens)
+      A ordem dos índices é a ordem no site.
+    -->
+    <form id="stack-form" class="grade-lateral grade-lateral--340" method="post" autocomplete="off"
+          th:action="@{/admin/stack}" action="#" data-stack data-sem-enter>
+
+      <div class="pilha pilha--16" data-categorias>
+
+        <section class="cartao categoria" th:each="c, st : ${categorias}" data-categoria>
+          <input type="hidden" data-campo="id" th:name="|categorias[${st.index}].id|" th:value="${c.id}">
+          <div class="categoria__topo">
+            <input type="text" class="categoria__titulo" data-campo="title" maxlength="40"
+                   aria-label="Nome da categoria" placeholder="Nome da categoria"
+                   th:name="|categorias[${st.index}].title|" th:value="${c.title}" value="Linguagens">
+            <span class="categoria__conta mono"><span data-conta th:text="${#lists.size(c.items)}">4</span> <span data-conta-rotulo th:text="${#lists.size(c.items) == 1} ? 'item' : 'itens'">itens</span></span>
+          </div>
+          <div class="categoria__chips">
+            <span class="chip" th:each="it : ${c.items}" data-chip>
+              <span data-nome th:text="${it.name}">Java</span>
+              <input type="hidden" data-campo="items" th:name="|categorias[${st.index}].items|" th:value="${it.name}">
+              <button type="button" class="chip__x" th:aria-label="|Remover ${it.name}|" aria-label="Remover" data-remover>
+                <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"></path></svg>
+              </button>
+            </span>
+            <input type="text" class="chip-novo" maxlength="30" placeholder="+ adicionar e Enter"
+                   th:aria-label="|Adicionar em ${c.title}|" aria-label="Adicionar" data-adicionar>
+          </div>
+        </section>
+
+        <!-- Lista vazia -->
+        <div class="vazio vazio--compacto" th:if="${#lists.isEmpty(categorias)}" data-sem-categorias>
+          <h2 class="vazio__titulo">Nenhuma categoria ainda</h2>
+          <p class="vazio__texto">Enquanto não houver categorias, o site mostra “A stack está sendo atualizada”.</p>
+        </div>
+      </div>
+
+      <aside class="lateral-fixa">
+        <div class="cartao">
+          <p class="rotulo-mono mono">alterações pendentes</p>
+          <ul class="pendencias" data-pendencias hidden></ul>
+          <p class="pendencias__nada" data-sem-pendencias>Nada mudou. O que está aqui é o que está no site.</p>
+          <div class="dupla">
+            <button type="button" class="btn btn--secundario btn--46 btn--raso" data-descartar>Descartar</button>
+            <button type="submit" class="btn btn--primario btn--46 btn--raso">Salvar</button>
+          </div>
+        </div>
+        <div class="cartao cartao--dica">
+          <p><strong>Dica:</strong> categorias com muitos itens viram ruído. Na tela pequena, 4 por categoria cabem sem quebrar linha.</p>
+        </div>
+      </aside>
+    </form>
+
+    <!-- Modelos usados pelo admin.js -->
+    <template data-modelo-categoria>
+      <section class="cartao categoria categoria--nova" data-categoria>
+        <input type="hidden" data-campo="id" value="">
+        <div class="categoria__topo">
+          <input type="text" class="categoria__titulo" data-campo="title" maxlength="40"
+                 aria-label="Nome da categoria" placeholder="Nome da categoria">
+          <span class="categoria__conta mono"><span data-conta>0</span> <span data-conta-rotulo>itens</span></span>
+        </div>
+        <div class="categoria__chips">
+          <input type="text" class="chip-novo" maxlength="30" placeholder="+ adicionar e Enter" aria-label="Adicionar tecnologia" data-adicionar>
+        </div>
+      </section>
+    </template>
+    <template data-modelo-chip>
+      <span class="chip" data-chip>
+        <span data-nome></span>
+        <input type="hidden" data-campo="items">
+        <button type="button" class="chip__x" data-remover>
+          <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"></path></svg>
+        </button>
+      </span>
+    </template>
+
+  </main>
+</div>
+</body>
+</html>

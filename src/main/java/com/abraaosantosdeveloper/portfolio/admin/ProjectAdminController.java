@@ -2,6 +2,8 @@ package com.abraaosantosdeveloper.portfolio.admin;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -17,9 +19,6 @@ import com.abraaosantosdeveloper.portfolio.domain.project.ProjectStatus;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 @Controller
 @RequiredArgsConstructor
@@ -48,7 +47,7 @@ public class ProjectAdminController {
         return ProjectStatus.values();
     }
 
-        @ModelAttribute("coresPorId")
+    @ModelAttribute("coresPorId")
     public Map<String, ProjectCatalog.Color> coresPorId() {
         return ProjectCatalog.COLORS.stream()
             .collect(Collectors.toMap(ProjectCatalog.Color::id, Function.identity()));

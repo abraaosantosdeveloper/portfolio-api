@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{admin/fragments/layout :: head('Trajetória')}">
+  <meta charset="UTF-8">
+  <title>Trajetória · abraao.dev / admin</title>
+  <link rel="stylesheet" href="../../static/admin/css/admin.css">
+</head>
+<body>
+<div class="app">
+
+  <aside th:replace="~{admin/fragments/layout :: lateral('trajetoria')}"></aside>
+
+  <main class="conteudo conteudo--fim">
+
+    <div class="cabecalho">
+      <div>
+        <h1 class="cabecalho__titulo">Trajetória</h1>
+        <p class="cabecalho__sub">Do mais recente ao começo. A fase marcada como atual vira o “VOCÊ ESTÁ AQUI” no site.</p>
+      </div>
+      <a class="btn btn--primario btn--46 btn--14" th:href="@{/admin/trajetoria/nova}" href="#">+ Nova fase</a>
+    </div>
+
+    <div th:replace="~{admin/fragments/layout :: toast(${toast}, 'ok')}"></div>
+    <div th:replace="~{admin/fragments/layout :: toast(${erro}, 'erro')}"></div>
+
+    <div class="grade-lateral grade-lateral--460 grade-lateral--24">
+
+      <!-- ========== Lista ========== -->
+      <section class="cartao cartao--28" aria-label="Fases">
+        <ol class="fases">
+
+          <!-- Próxima fase: fixa, sempre a primeira -->
+          <li class="fase">
+            <div class="fase__trilho">
+              <span class="no no--trancado" aria-hidden="true">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V8a4 4 0 0 1 8 0v3"></path></svg>
+              </span>
+              <span class="trilho trilho--tracejado" aria-hidden="true"></span>
+            </div>
+            <div class="fase__corpo">
+              <div class="fase__titulo-linha">
+                <span class="fase__titulo fase__titulo--trancado">Próxima fase</span>
+                <span class="etiqueta mono">fixa</span>
+              </div>
+              <form class="proxima" method="post" th:action="@{/admin/trajetoria/proxima-fase}" action="#" data-proxima>
+                <label for="proxima-texto" class="ajuda proxima__rotulo">Texto do convite</label>
+                <div class="proxima__linha">
+                  <input id="proxima-texto" name="texto" type="text" class="in in--40" maxlength="120"
+                         th:value="${proximaFaseTexto}" value="Quem sabe na sua empresa?">
+                  <button type="submit" class="btn btn--primario btn--40 btn--raso" data-proxima-salvar hidden>Salvar</button>
+                </div>
+              </form>
+            </div>
+          </li>
+
+          <li class="fase" th:each="f, st : ${fases}"
+              th:with="atual=${f.id == faseAtualId},
+                       tipo=${f.kind == null} ? 'WORK' : ${f.kind.name()},
+                       ini=${f.startDate == null} ? '—' : ${#temporals.format(f.startDate, 'yyyy')},
+                       fim=${f.endDate == null} ? 'hoje' : ${#temporals.format(f.endDate, 'yyyy')}"
+              th:classappend="${f.id == faseEditadaId} ? 'fase--editando'">
+            <div class="fase__trilho">
+              <span class="no" th:classappend="${atual} ? 'no--atual'" aria-hidden="true">
+                <svg th:replace="~{admin/fragments/icones :: fase(${tipo}, 20)}"></svg>
+              </span>
+              <span class="trilho" th:unless="${st.last}" aria-hidden="true"></span>
+            </div>
+            <div class="fase__corpo fase__corpo--linha">
+              <div class="fase__textos">
+                <span class="badge-aqui mono" th:if="${atual}">VOCÊ ESTÁ AQUI</span>
+                <p class="fase__titulo" th:text="${f.title}">Desenvolvedor — Inovação</p>
+                <p class="fase__lugar mono"
+                   th:text="|${f.institution ?: '—'} · ${(tipo == 'MILESTONE' or ini == fim) ? ini : ini + ' — ' + fim}|">[Empresa] · [ANO] — hoje</p>
+              </div>
+              <a class="btn-editar" th:href="@{/admin/trajetoria/{id}(id=${f.id})}" href="#"
+                 th:aria-label="|Editar ${f.title}|">Editar</a>
+            </div>
+          </li>
+        </ol>
+
+        <p class="ajuda fases__nota" th:unless="${#lists.isEmpty(fases)}">Ordenado automaticamente pela data de início. Fases em andamento ao mesmo tempo (trabalho + faculdade) podem existir; só uma é o destaque.</p>
+        <p class="ajuda fases__nota" th:if="${#lists.isEmpty(fases)}">Nenhuma fase ainda. No site, só a “Próxima fase” aparece até você adicionar a primeira.</p>
+      </section>
+
+      <!-- ========== Painel lateral ========== -->
+      <div class="lateral-fixa">
+
+        <!-- Fechado -->
+        <div class="cartao convite" th:if="${faseForm == null}">
+          <span class="convite__icone" aria-hidden="true">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg>
+          </span>
+          <h2 class="convite__titulo">Subiu de fase?</h2>
+          <p class="convite__texto">Novo emprego, curso ou certificação: adicione uma fase e decida se ela passa a ser a atual.</p>
+          <a class="btn btn--primario btn--46 btn--14 convite__acao" th:href="@{/admin/trajetoria/nova}" href="#">+ Nova fase</a>
+        </div>
+
+        <!-- Aberto: nova fase ou edição -->
+        <form class="cartao cartao--28 painel-fase" th:if="${faseForm != null}" method="post" novalidate
+              th:object="${faseForm}"
+              th:with="editando=${faseEditadaId != null}"
+              th:action="${faseEditadaId == null} ? @{/admin/trajetoria} : @{/admin/trajetoria/{id}(id=${faseEditadaId})}"
+              data-fase data-sem-enter data-avisar-saida>
+
+          <div class="painel-fase__topo">
+            <h2 class="painel-fase__titulo" th:text="${faseEditadaId == null} ? 'Nova fase' : 'Editar fase'">Nova fase</h2>
+            <a class="fechar" th:href="@{/admin/trajetoria}" href="#" aria-label="Fechar">
+              <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"></path></svg>
+            </a>
+          </div>
+
+          <p class="erro-campo erro-campo--bloco" th:if="${#fields.hasGlobalErrors()}" th:each="e : ${#fields.globalErrors()}" th:text="${e}">Erro</p>
+
+          <span class="rotulo rotulo--bloco rotulo--20" id="tipo-rotulo">Tipo</span>
+          <div class="pilulas pilulas--8" role="radiogroup" aria-labelledby="tipo-rotulo">
+            <label class="pilula pilula--icone">
+              <input type="radio" th:field="*{kind}" value="WORK">
+              <span><svg th:replace="~{admin/fragments/icones :: fase('WORK', 16)}"></svg>Trabalho</span>
+            </label>
+            <label class="pilula pilula--icone">
+              <input type="radio" th:field="*{kind}" value="STUDY">
+              <span><svg th:replace="~{admin/fragments/icones :: fase('STUDY', 16)}"></svg>Estudo</span>
+            </label>
+            <label class="pilula pilula--icone">
+              <input type="radio" th:field="*{kind}" value="MILESTONE">
+              <span><svg th:replace="~{admin/fragments/icones :: fase('MILESTONE', 16)}"></svg>Marco</span>
+            </label>
+          </div>
+          <p class="erro-campo" th:if="${#fields.hasErrors('kind')}" th:errors="*{kind}">Erro</p>
+
+          <div class="campo campo--16">
+            <label for="title">Título *</label>
+            <input id="title" type="text" class="in in--46" maxlength="100" th:field="*{title}" th:errorclass="in--erro"
+                   placeholder="Ex.: Desenvolvedor Back-end Pleno">
+            <p class="erro-campo" th:if="${#fields.hasErrors('title')}" th:errors="*{title}">Erro</p>
+          </div>
+
+          <div class="campo campo--14">
+            <label for="institution">Empresa ou instituição</label>
+            <input id="institution" type="text" class="in in--46" maxlength="100" th:field="*{institution}" th:errorclass="in--erro"
+                   placeholder="Ex.: [Empresa] · [Cidade], PE">
+            <p class="erro-campo" th:if="${#fields.hasErrors('institution')}" th:errors="*{institution}">Erro</p>
+          </div>
+
+          <div class="duas-colunas duas-colunas--12 campo--14">
+            <div class="campo">
+              <label for="start">Início</label>
+              <input id="start" type="text" class="in in--46" inputmode="numeric" maxlength="7" placeholder="mm/aaaa"
+                     th:field="*{start}" th:errorclass="in--erro" data-mes-ano>
+              <p class="erro-campo" th:if="${#fields.hasErrors('start')}" th:errors="*{start}">Erro</p>
+            </div>
+            <div class="campo">
+              <label for="end">Fim</label>
+              <input id="end" type="text" class="in in--46" inputmode="numeric" maxlength="7"
+                     th:placeholder="*{ongoing} ? 'hoje' : 'mm/aaaa'" th:disabled="*{ongoing}"
+                     th:field="*{end}" th:errorclass="in--erro" data-mes-ano data-fim>
+              <p class="erro-campo" th:if="${#fields.hasErrors('end')}" th:errors="*{end}">Erro</p>
+            </div>
+          </div>
+
+          <label class="marcar marcar--12">
+            <input type="checkbox" th:field="*{ongoing}" data-em-andamento>
+            Ainda estou nessa fase
+          </label>
+
+          <div class="caixa-atual">
+            <label class="marcar marcar--topo">
+              <input type="checkbox" th:field="*{current}" data-fase-atual>
+              <span>
+                <strong class="marcar__titulo">Esta é a minha fase atual</strong>
+                <span class="marcar__desc">Vira o destaque “VOCÊ ESTÁ AQUI” no site.</span>
+              </span>
+            </label>
+            <!-- Só aparece se já existe outra fase atual (e não é esta que está sendo editada). -->
+            <div class="caixa-atual__troca"
+                 th:if="${faseAtual != null and faseAtual.id != faseEditadaId}">
+              <p class="caixa-atual__aviso">“<strong th:text="${faseAtual.title}">Desenvolvedor — Inovação</strong>” deixa de ser a atual e vai para o histórico.</p>
+              <div class="campo campo--10">
+                <label for="previousEnd">Quando ela terminou? <span class="rotulo__leve">(vazio = continua “hoje”)</span></label>
+                <input id="previousEnd" type="text" class="in in--46 in--branco" inputmode="numeric" maxlength="7" placeholder="mm/aaaa"
+                       th:field="*{previousEnd}" th:errorclass="in--erro" data-mes-ano>
+                <p class="erro-campo" th:if="${#fields.hasErrors('previousEnd')}" th:errors="*{previousEnd}">Erro</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="campo campo--16">
+            <label for="description">Descrição curta</label>
+            <textarea id="description" class="ta ta--10" rows="2" maxlength="160" th:field="*{description}" th:errorclass="in--erro"
+                      placeholder="Uma linha sobre o que você faz ou estuda."></textarea>
+            <p class="erro-campo" th:if="${#fields.hasErrors('description')}" th:errors="*{description}">Erro</p>
+          </div>
+
+          <div class="campo campo--14">
+            <label for="highlights">O que eu faço / fiz</label>
+            <textarea id="highlights" class="ta ta--10" rows="3" maxlength="2000" th:field="*{highlights}" th:errorclass="in--erro"
+                      placeholder="Aparece no “Saber mais”. Uma ação por linha."></textarea>
+            <p class="erro-campo" th:if="${#fields.hasErrors('highlights')}" th:errors="*{highlights}">Erro</p>
+          </div>
+
+          <div class="campo campo--14">
+            <label for="tec-entrada">Tecnologias</label>
+            <div class="chips-campo chips-campo--46" data-chips-ui="tec" hidden>
+              <input id="tec-entrada" type="text" class="chips-campo__entrada" autocomplete="off" maxlength="30"
+                     placeholder="Digite e aperte Enter"
+                     th:attr="list=${sugestoesStack != null} ? 'sugestoes-stack' : null">
+            </div>
+            <input type="text" class="in in--46" th:field="*{technologies}" th:errorclass="in--erro"
+                   placeholder="Java, Spring Boot" data-chips-fonte="tec" data-max="12">
+            <datalist id="sugestoes-stack" th:if="${sugestoesStack != null}">
+              <option th:each="s : ${sugestoesStack}" th:value="${s}"></option>
+            </datalist>
+            <p class="erro-campo" th:if="${#fields.hasErrors('technologies')}" th:errors="*{technologies}">Erro</p>
+          </div>
+
+          <div class="dupla dupla--22">
+            <a class="btn btn--secundario btn--46 btn--14 btn--raso" th:href="@{/admin/trajetoria}" href="#">Cancelar</a>
+            <button type="submit" class="btn btn--primario btn--46 btn--14 btn--raso">Salvar fase</button>
+          </div>
+
+          <button th:if="${editando}" type="submit" class="link-perigo painel-fase__excluir" formnovalidate
+                  th:formaction="@{/admin/trajetoria/{id}/excluir(id=${faseEditadaId})}"
+                  data-confirmar="Excluir esta fase? Isso não tem volta.">Excluir esta fase</button>
+        </form>
+      </div>
+    </div>
+  </main>
+</div>
+</body>
+</html>
