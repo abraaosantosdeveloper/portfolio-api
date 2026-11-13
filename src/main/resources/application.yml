@@ -1,6 +1,10 @@
 spring:
   application:
     name: portfolio
+  servlet:
+    multipart:
+      max-file-size: 2MB      # cada print
+      max-request-size: 12MB  # até 5 prints + campos do formulário
   mongodb:
     database: portfolio
 

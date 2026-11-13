@@ -1,26 +1,71 @@
 <!DOCTYPE html>
 <html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<!--
+  Fragmentos compartilhados do painel.
+  - head(titulo) ........ <head> completo (fontes, admin.css, admin.js)
+  - lateral(ativo) ...... barra lateral: marca, navegação, conta e "Sair"
+  - toast ............... aviso de sucesso/erro no topo da página
+  ativo: 'projetos' | 'stack' | 'trajetoria'
+-->
 <head th:fragment="head(titulo)">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex, nofollow">
-  <title th:text="${titulo} + ' · Admin do portfólio'">Admin do portfólio</title>
+  <title th:text="${titulo} + ' · abraao.dev / admin'">Admin · abraao.dev</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" th:href="@{/admin/css/admin.css}">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Recursive:wght,CASL,MONO@300..800,0..1,0..1&amp;display=swap">
+  <link rel="stylesheet" th:href="@{/admin/css/admin.css}" href="../../static/admin/css/admin.css">
+  <script th:src="@{/admin/js/admin.js}" src="../../static/admin/js/admin.js" defer></script>
 </head>
 <body>
 
-<nav class="menu" th:fragment="menu(ativo)">
-  <p class="marca">Portfólio &middot; admin</p>
-  <a th:href="@{/admin/projetos}" th:classappend="${ativo == 'projetos'} ? 'ativo'">Projetos</a>
-  <a th:href="@{/admin/stack}" th:classappend="${ativo == 'stack'} ? 'ativo'">Stack</a>
-  <a th:href="@{/admin/trajetoria}" th:classappend="${ativo == 'trajetoria'} ? 'ativo'">Trajetória</a>
-  <form th:action="@{/admin/logout}" method="post">
-    <button class="sair" type="submit">Sair</button>
-  </form>
-</nav>
+<aside class="lateral" th:fragment="lateral(ativo)">
+  <a class="marca mono" th:href="@{/admin/projetos}" href="#">abraao<span class="marca__ponto">.dev</span> <span class="marca__secao">/ admin</span></a>
+
+  <nav class="nav" aria-label="Painel">
+    <a class="nav__item" th:href="@{/admin/projetos}" href="#"
+       th:classappend="${ativo == 'projetos'} ? 'nav__item--ativo'"
+       th:aria-current="${ativo == 'projetos'} ? 'page'">
+      <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="2"></rect><rect x="14" y="3" width="7" height="7" rx="2"></rect><rect x="3" y="14" width="7" height="7" rx="2"></rect><rect x="14" y="14" width="7" height="7" rx="2"></rect></svg>
+      <span class="nav__rotulo">Projetos</span>
+      <span class="nav__conta mono" th:if="${ativo == 'projetos' and totalProjetos != null}" th:text="${totalProjetos}">0</span>
+    </a>
+    <a class="nav__item" th:href="@{/admin/stack}" href="#"
+       th:classappend="${ativo == 'stack'} ? 'nav__item--ativo'"
+       th:aria-current="${ativo == 'stack'} ? 'page'">
+      <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 3 8l9 5 9-5-9-5z"></path><path d="m3 13 9 5 9-5"></path></svg>
+      <span class="nav__rotulo">Stack</span>
+    </a>
+    <a class="nav__item" th:href="@{/admin/trajetoria}" href="#"
+       th:classappend="${ativo == 'trajetoria'} ? 'nav__item--ativo'"
+       th:aria-current="${ativo == 'trajetoria'} ? 'page'">
+      <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="2.5"></circle><circle cx="12" cy="19" r="2.5"></circle><path d="M12 7.5v9"></path></svg>
+      <span class="nav__rotulo">Trajetória</span>
+    </a>
+    <a class="nav__item" th:href="${siteUrl} ?: 'https://abraaosantosdeveloper.github.io'" href="#" target="_blank" rel="noopener">
+      <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"></path></svg>
+      <span class="nav__rotulo">Ver site</span>
+    </a>
+  </nav>
+
+  <div class="conta" th:with="usuario=${#authentication != null ? #authentication.name : 'abraao'}">
+    <span class="avatar" aria-hidden="true" th:text="${#strings.toUpperCase(#strings.substring(usuario, 0, 1))}">A</span>
+    <span class="conta__nome" th:text="${usuario}">abraao</span>
+    <form class="conta__sair" th:action="@{/admin/logout}" method="post">
+      <button type="submit" class="link-sair">Sair</button>
+    </form>
+  </div>
+</aside>
+
+<!-- Aviso no topo. Use com th:replace="~{admin/fragments/layout :: toast(${mensagem}, 'ok')}" ou 'erro' -->
+<div th:fragment="toast(mensagem, tipo)" class="toast" th:if="${mensagem != null}"
+     th:classappend="${tipo == 'erro'} ? 'toast--erro'"
+     th:attr="role=${tipo == 'erro'} ? 'alert' : 'status'" data-toast>
+  <svg th:if="${tipo != 'erro'}" aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"></path></svg>
+  <svg th:if="${tipo == 'erro'}" aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v5M12 16.5v.01"></path><circle cx="12" cy="12" r="9"></circle></svg>
+  <span th:text="${mensagem}">Mensagem</span>
+</div>
 
 </body>
 </html>

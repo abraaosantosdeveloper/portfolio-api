@@ -1,61 +1,71 @@
 <!DOCTYPE html>
 <html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{admin/fragments/layout :: head('Projetos')}"></head>
+<head th:replace="~{admin/fragments/layout :: head('Projetos')}">
+  <meta charset="UTF-8">
+  <title>Projetos · abraao.dev / admin</title>
+  <link rel="stylesheet" href="../../../static/admin/css/admin.css">
+</head>
 <body>
 <div class="app">
 
-  <nav th:replace="~{admin/fragments/layout :: menu('projetos')}"></nav>
+  <aside th:replace="~{admin/fragments/layout :: lateral('projetos')}"></aside>
 
-  <main class="conteudo">
-    <div class="topo">
-      <h1>Projetos</h1>
-      <a class="botao" th:href="@{/admin/projetos/novo}">Novo projeto</a>
-    </div>
+  <main class="conteudo conteudo--projetos">
 
-    <p class="aviso ok" th:if="${param.salvo}">Projeto salvo.</p>
-
-    <div class="cartao" th:if="${#lists.isEmpty(projetos)}">
-      <div class="vazio">
-        <h2>Nenhum projeto ainda</h2>
-        <p>Cadastre o primeiro projeto para ele aparecer no site assim que for publicado.</p>
-        <a class="botao" th:href="@{/admin/projetos/novo}">Criar primeiro projeto</a>
+    <div class="cabecalho cabecalho--centro">
+      <div>
+        <h1 class="cabecalho__titulo">Projetos</h1>
+        <p class="cabecalho__sub">O que você publicar aqui aparece na seção de projetos do site.</p>
       </div>
+      <a class="btn btn--primario btn--46" th:href="@{/admin/projetos/novo}" href="#">+ Novo projeto</a>
     </div>
 
-    <div class="cartao" th:unless="${#lists.isEmpty(projetos)}">
-      <table>
-        <thead>
-          <tr>
-            <th>Projeto</th>
-            <th>Ano</th>
-            <th>Status</th>
-            <th>Situação</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr th:each="p : ${projetos}">
-            <td>
-              <a th:href="@{/admin/projetos/{id}(id=${p.id})}" th:text="${p.title}">Nome do projeto</a>
-              <span class="sub" th:text="${p.slug}">slug-do-projeto</span>
-            </td>
-            <td th:text="${p.year}">2026</td>
-            <td>
-              <span class="selo"
-                    th:text="${p.status == null ? '-' :
-                               (p.status.name() == 'PRODUCTION' ? 'Em produção' :
-                               (p.status.name() == 'IN_PROGRESS' ? 'Em andamento' : 'Arquivado'))}">Em produção</span>
-            </td>
-            <td>
-              <span class="selo"
-                    th:classappend="${p.published} ? 'publicado' : 'rascunho'"
-                    th:text="${p.published} ? 'Publicado' : 'Rascunho'">Publicado</span>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+    <div th:replace="~{admin/fragments/layout :: toast(${param.salvo != null} ? 'Projeto salvo.' : (${param.excluido != null} ? 'Projeto excluído.' : null), 'ok')}"></div>
+
+    <div class="estatisticas mono">
+      <span th:text="|publicados: ${#lists.size(projetos.?[published])}|">publicados: 0</span>
+      <span th:text="|rascunhos: ${#lists.size(projetos.?[!published])}|">rascunhos: 0</span>
+      <span th:text="|último deploy: ${ultimaPublicacao ?: '—'}|">último deploy: —</span>
     </div>
+
+    <!-- ===== Estado vazio ===== -->
+    <div class="vazio" th:if="${#lists.isEmpty(projetos)}">
+      <span class="vazio__icone" aria-hidden="true">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg>
+      </span>
+      <h2 class="vazio__titulo">Nenhum projeto ainda</h2>
+      <p class="vazio__texto">Enquanto a lista estiver vazia, o site mostra um aviso de “em breve” no lugar da seção.</p>
+      <a class="btn btn--secundario vazio__acao" th:href="@{/admin/projetos/novo}" href="#">Criar o primeiro projeto</a>
+    </div>
+
+    <!-- ===== Lista ===== -->
+    <section class="cartao lista-projetos" th:unless="${#lists.isEmpty(projetos)}" aria-label="Projetos cadastrados">
+      <ul class="lista-projetos__itens">
+        <li th:each="p : ${projetos}"
+            th:with="cor=${coresPorId[p.color] ?: coresPorId['menta-2']}, ic=${iconesPorId[p.icon] ?: iconesPorId['code']}">
+          <a class="projeto-linha" th:href="@{/admin/projetos/{id}(id=${p.id})}" href="#">
+            <span class="picone picone--48" aria-hidden="true"
+                  th:style="|--face:${cor.face};--sombra:${cor.shadow}|" style="--face:#12A37A;--sombra:#0B7556">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path th:attr="d=${ic.path}" d="M8 6l-6 6 6 6 M16 6l6 6-6 6 M14 4l-4 16"></path></svg>
+            </span>
+            <span class="projeto-linha__texto">
+              <span class="projeto-linha__topo">
+                <span class="projeto-linha__nome" th:text="${p.title}">Nome do projeto</span>
+                <span class="projeto-linha__ano mono" th:text="${p.year}">2026</span>
+              </span>
+              <span class="projeto-linha__desc" th:text="${p.description}">A descrição curta aparece aqui.</span>
+            </span>
+            <span class="projeto-linha__status"
+                  th:text="${p.status == null} ? '—' : (${p.status.name() == 'PRODUCTION'} ? 'Em produção' : (${p.status.name() == 'IN_PROGRESS'} ? 'Em andamento' : 'Arquivado'))">Em produção</span>
+            <span class="selo mono" th:classappend="${p.published} ? 'selo--publicado' : 'selo--rascunho'"
+                  th:text="${p.published} ? 'publicado' : 'rascunho'">publicado</span>
+            <span class="btn-editar">Editar</span>
+          </a>
+        </li>
+      </ul>
+    </section>
+
   </main>
-
 </div>
 </body>
 </html>

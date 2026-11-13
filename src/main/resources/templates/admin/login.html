@@ -1,220 +1,42 @@
 <!DOCTYPE html>
 <html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
-<head>
+<head th:replace="~{admin/fragments/layout :: head('Entrar')}">
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="robots" content="noindex, nofollow">
-  <title>Entrar · Admin do portfólio</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --fundo: #F5F8F6;
-      --superficie: #FFFFFF;
-      --texto: #13201A;
-      --texto-2: #55635B;
-      --linha: #DDE5E0;
-      --destaque: #0F7B5F;
-      --destaque-escuro: #0A5442;
-      --destaque-suave: #DDF1EA;
-      --erro-suave: #FDECEA;
-      --erro-texto: #A3372A;
-    }
-
-    * { box-sizing: border-box; }
-
-    body {
-      margin: 0;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 28px;
-      padding: 24px 16px;
-      background: var(--fundo);
-      color: var(--texto);
-      font-family: 'Manrope', Arial, Helvetica, sans-serif;
-    }
-
-    /* ---------- Marca acima do card ---------- */
-    .marca {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 16px;
-      font-weight: 500;
-      color: var(--texto);
-      text-decoration: none;
-    }
-    .marca .ponto { color: var(--destaque); }
-    .marca .secao { color: var(--texto-2); }
-
-    /* ---------- Card ---------- */
-    .cartao {
-      width: 100%;
-      max-width: 400px;
-      background: var(--superficie);
-      border: 1px solid var(--linha);
-      border-radius: 20px;
-      padding: 36px;
-      box-shadow: 0 6px 0 var(--linha);
-    }
-
-    .icone {
-      width: 56px;
-      height: 56px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 16px;
-      background: var(--destaque);
-      color: #FFFFFF;
-      box-shadow: 0 5px 0 var(--destaque-escuro);
-    }
-
-    h1 {
-      margin: 22px 0 0;
-      font-size: 26px;
-      font-weight: 800;
-      letter-spacing: -0.02em;
-    }
-
-    .subtitulo {
-      margin: 6px 0 0;
-      font-size: 15px;
-      color: var(--texto-2);
-    }
-
-    /* ---------- Avisos ---------- */
-    .aviso {
-      margin: 20px 0 0;
-      padding: 12px 14px;
-      border-radius: 12px;
-      font-size: 14px;
-      font-weight: 600;
-    }
-    .aviso.erro { background: var(--erro-suave); color: var(--erro-texto); }
-    .aviso.ok { background: var(--destaque-suave); color: var(--destaque-escuro); }
-
-    /* ---------- Campos ---------- */
-    form { margin-top: 28px; }
-
-    .campo {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-    .campo + .campo { margin-top: 16px; }
-
-    label {
-      font-size: 13px;
-      font-weight: 700;
-    }
-
-    input {
-      width: 100%;
-      height: 48px;
-      padding: 0 14px;
-      font: inherit;
-      font-size: 15px;
-      color: var(--texto);
-      background: var(--fundo);
-      border: 2px solid var(--linha);
-      border-radius: 12px;
-      transition: border-color .15s, background-color .15s;
-    }
-    input:focus {
-      outline: none;
-      border-color: var(--destaque);
-      background: var(--superficie);
-    }
-
-    /* ---------- Botão (efeito 3D) ---------- */
-    button {
-      width: 100%;
-      height: 52px;
-      margin-top: 28px;
-      font: inherit;
-      font-size: 16px;
-      font-weight: 700;
-      color: #FFFFFF;
-      background: var(--destaque);
-      border: 0;
-      border-radius: 12px;
-      cursor: pointer;
-      box-shadow: 0 5px 0 var(--destaque-escuro);
-      transition: transform .08s, box-shadow .08s;
-    }
-    button:active {
-      transform: translateY(3px);
-      box-shadow: 0 2px 0 var(--destaque-escuro);
-    }
-    button:focus-visible {
-      outline: 2px solid var(--destaque);
-      outline-offset: 4px;
-    }
-
-    .nota {
-      margin: 18px 0 0;
-      font-size: 13px;
-      line-height: 1.5;
-      color: var(--texto-2);
-      text-align: center;
-    }
-
-    .voltar {
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--destaque);
-      text-decoration: none;
-    }
-    .voltar:hover { text-decoration: underline; }
-
-    @media (max-width: 440px) {
-      .cartao { padding: 28px 22px; }
-    }
-  </style>
+  <title>Entrar · abraao.dev / admin</title>
+  <link rel="stylesheet" href="../../static/admin/css/admin.css">
 </head>
-<body>
+<body class="pagina-login">
 
-  <a class="marca" href="https://abraaosantosdeveloper.github.io">
-    abraao<span class="ponto">.dev</span> <span class="secao">/ admin</span>
-  </a>
+  <a class="marca marca--login mono" th:href="${siteUrl} ?: 'https://abraaosantosdeveloper.github.io'" href="#">abraao<span class="marca__ponto">.dev</span> <span class="marca__secao">/ admin</span></a>
 
-  <main class="cartao">
-    <span class="icone" aria-hidden="true">
-      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-           stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <rect x="5" y="11" width="14" height="10" rx="2"></rect>
-        <path d="M8 11V8a4 4 0 0 1 8 0v3"></path>
-      </svg>
+  <main class="login">
+    <span class="login__icone" aria-hidden="true">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V8a4 4 0 0 1 8 0v3"></path></svg>
     </span>
 
-    <h1>Entrar no painel</h1>
-    <p class="subtitulo">Área restrita. Só o dono da casa.</p>
+    <h1 class="login__titulo">Entrar no painel</h1>
+    <p class="login__sub">Área restrita. Só o dono da casa.</p>
 
-    <p class="aviso erro" role="alert" th:if="${param.bloqueado}">Muitas tentativas erradas. Tente novamente em 15 minutos.</p>
-    <p class="aviso erro" role="alert" th:if="${param.erro}">Usuário ou senha inválidos.</p>
-    <p class="aviso ok" role="status" th:if="${param.saiu}">Você saiu do painel.</p>
+    <p class="aviso aviso--erro" role="alert" th:if="${param.bloqueado}">Muitas tentativas erradas. Tente de novo em 15 minutos.</p>
+    <p class="aviso aviso--erro" role="alert" th:if="${param.erro}">Usuário ou senha inválidos.</p>
+    <p class="aviso aviso--ok" role="status" th:if="${param.saiu}">Você saiu do painel.</p>
 
-    <form th:action="@{/admin/login}" method="post">
+    <form class="login__form" th:action="@{/admin/login}" action="#" method="post">
       <div class="campo">
         <label for="username">Usuário</label>
-        <input id="username" name="username" type="text" autocomplete="username" required autofocus>
+        <input id="username" name="username" type="text" class="in" autocomplete="username" required autofocus>
       </div>
-
-      <div class="campo">
+      <div class="campo campo--seguinte">
         <label for="password">Senha</label>
-        <input id="password" name="password" type="password" autocomplete="current-password" required>
+        <input id="password" name="password" type="password" class="in" autocomplete="current-password" required>
       </div>
-
-      <button type="submit">Entrar</button>
+      <button type="submit" class="btn btn--primario btn--bloco btn--52">Entrar</button>
     </form>
 
-    <p class="nota">Após 5 tentativas erradas, o acesso fica bloqueado por 15 minutos.</p>
+    <p class="login__nota">Após 5 tentativas erradas, o acesso fica bloqueado por 15 minutos.</p>
   </main>
 
-  <a class="voltar" href="https://abraaosantosdeveloper.github.io">&larr; Voltar ao site</a>
+  <a class="voltar" th:href="${siteUrl} ?: 'https://abraaosantosdeveloper.github.io'" href="#">← Voltar ao site</a>
 
 </body>
 </html>

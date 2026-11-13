@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Não encontrado · abraao.dev / admin</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Recursive:wght,CASL,MONO@300..800,0..1,0..1&amp;display=swap">
+  <link rel="stylesheet" th:href="@{/admin/css/admin.css}" href="../../static/admin/css/admin.css">
+</head>
+<body class="pagina-login">
+  <a class="marca marca--login mono" th:href="@{/admin/projetos}" href="#">abraao<span class="marca__ponto">.dev</span> <span class="marca__secao">/ admin</span></a>
+  <main class="login login--centro">
+    <span class="vazio__icone" aria-hidden="true">
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="6"></circle><path d="m20 20-4.5-4.5"></path></svg>
+    </span>
+    <h1 class="login__titulo">Não achei essa página</h1>
+    <p class="login__sub">O item pode ter sido excluído ou o endereço está errado.</p>
+    <a class="btn btn--primario btn--bloco btn--52 login__acao" th:href="@{/admin/projetos}" href="#">Voltar ao painel</a>
+  </main>
+</body>
+</html>
