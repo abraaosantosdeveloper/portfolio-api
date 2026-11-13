@@ -9,6 +9,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
+import static org.hamcrest.Matchers.containsString;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -161,6 +163,29 @@ class ProjectAdminTest {
         var project = projects.findById(id).orElseThrow();
         assertThat(project.getTitle()).isEqualTo("Título Novo");
         assertThat(project.getSlug()).isEqualTo("titulo-original");
+    }
+        @Test
+    void telasDoPainelRenderizam() throws Exception {
+        salvar("Projeto Visível", true);
+
+        // Lista com o aviso vindo da URL (?salvo): renderiza o template de verdade
+        mvc.perform(get("/admin/projetos").param("salvo", ""))
+            .andExpect(status().isOk())
+            .andExpect(content().string(containsString("Projeto salvo.")))
+            .andExpect(content().string(containsString("Projeto Visível")));
+
+        mvc.perform(get("/admin/projetos").param("excluido", ""))
+            .andExpect(status().isOk())
+            .andExpect(content().string(containsString("Projeto excluído.")));
+
+        mvc.perform(get("/admin/projetos/novo"))
+            .andExpect(status().isOk())
+            .andExpect(content().string(containsString("Novo projeto")));
+
+        var id = projects.findBySlug("projeto-visivel").orElseThrow().getId();
+        mvc.perform(get("/admin/projetos/" + id))
+            .andExpect(status().isOk())
+            .andExpect(content().string(containsString("Editar projeto")));
     }
 
     @Test

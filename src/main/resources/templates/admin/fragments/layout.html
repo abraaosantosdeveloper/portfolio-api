@@ -58,7 +58,8 @@
   </div>
 </aside>
 
-<!-- Aviso no topo. Use com th:replace="~{admin/fragments/layout :: toast(${mensagem}, 'ok')}" ou 'erro' -->
+<!-- Aviso no topo: toast(mensagem, 'ok' | 'erro'). Não passe ${param...} como argumento (o Thymeleaf 3.1 proíbe);
+     para avisos vindos da URL, envolva em <th:block th:if="${param.x}"> e passe o texto fixo. -->
 <div th:fragment="toast(mensagem, tipo)" class="toast" th:if="${mensagem != null}"
      th:classappend="${tipo == 'erro'} ? 'toast--erro'"
      th:attr="role=${tipo == 'erro'} ? 'alert' : 'status'" data-toast>

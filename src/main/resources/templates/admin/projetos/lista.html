@@ -20,7 +20,9 @@
       <a class="btn btn--primario btn--46" th:href="@{/admin/projetos/novo}" href="#">+ Novo projeto</a>
     </div>
 
-    <div th:replace="~{admin/fragments/layout :: toast(${param.salvo != null} ? 'Projeto salvo.' : (${param.excluido != null} ? 'Projeto excluído.' : null), 'ok')}"></div>
+    <!-- O Thymeleaf 3.1 proíbe ler ${param} dentro dos parâmetros de um fragmento: o teste fica no th:block. -->
+    <th:block th:if="${param.salvo}"><div th:replace="~{admin/fragments/layout :: toast('Projeto salvo.', 'ok')}"></div></th:block>
+    <th:block th:if="${param.excluido}"><div th:replace="~{admin/fragments/layout :: toast('Projeto excluído.', 'ok')}"></div></th:block>
 
     <div class="estatisticas mono">
       <span th:text="|publicados: ${#lists.size(projetos.?[published])}|">publicados: 0</span>
