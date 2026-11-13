@@ -45,6 +45,11 @@ public class ProjectAdminService {
     }
 
     @CacheEvict(value = CacheConfig.SITE, allEntries = true)
+    public void delete(String id) {
+        projects.delete(get(id)); // get() devolve 404 se não existir
+    }
+
+    @CacheEvict(value = CacheConfig.SITE, allEntries = true)
     public Project update(String id, ProjectForm form) {
         var project = get(id);
         form.applyTo(project); // slug, imagens e autor continuam como estavam

@@ -110,4 +110,12 @@ public class ProjectAdminController {
         service.update(id, form);
         return VOLTAR_PARA_LISTA;
     }
+
+    // ---------- Excluir projeto ----------
+
+    @PostMapping("/admin/projetos/{id}/excluir")
+    public String delete(@PathVariable String id) {
+        service.delete(id);
+        return "redirect:/admin/projetos?excluido";
+    }
 }

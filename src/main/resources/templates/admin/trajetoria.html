@@ -157,6 +157,7 @@
               <p class="erro-campo" th:if="${#fields.hasErrors('end')}" th:errors="*{end}">Erro</p>
             </div>
           </div>
+          <p class="erro-campo" th:if="${#fields.hasErrors('periodValid')}" th:errors="*{periodValid}">Erro</p>
 
           <label class="marcar marcar--12">
             <input type="checkbox" th:field="*{ongoing}" data-em-andamento>
@@ -211,6 +212,7 @@
               <option th:each="s : ${sugestoesStack}" th:value="${s}"></option>
             </datalist>
             <p class="erro-campo" th:if="${#fields.hasErrors('technologies')}" th:errors="*{technologies}">Erro</p>
+            <p class="erro-campo" th:if="${#fields.hasErrors('technologiesValid')}" th:errors="*{technologiesValid}">Erro</p>
           </div>
 
           <div class="dupla dupla--22">
