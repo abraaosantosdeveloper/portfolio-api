@@ -1,15 +1,39 @@
-services:
-  mongo:
-    image: mongo:8
-    ports: 
-      - "127.0.0.1:27017:27017"
-    volumes:
-      - mongo_data:/data/db
-    healthcheck:
-      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping')"]
-      interval: 5s
-      timeout: 5s
-      retries: 10
+spring:
+  application:
+    name: portfolio
+  servlet:
+    multipart:
+      max-file-size: 2MB      # cada print
+      max-request-size: 12MB  # até 5 prints + campos do formulário
+  mongodb:
+    uri: ${MONGODB_URI:mongodb://localhost:27017/portfolio}
+    database: portfolio
 
-volumes:
-  mongo_data:
+server:
+  port: ${PORT:8080}
+  servlet:
+    session:
+      cookie:
+        http-only: true
+        secure: ${SESSION_COOKIE_SECURE:true}
+        same-site: lax
+        
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+
+app:
+  admin:
+    username: ${APP_ADMIN_USERNAME}
+    password-hash: ${APP_ADMIN_PASSWORD_HASH}
+  cors:
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:5173}
+  mail:
+    resend-api-key: ${RESEND_API_KEY:}
+    from: ${MAIL_FROM:onboarding@resend.dev}
+    to: ${CONTACT_TO_EMAIL:}
+
+cloudinary:
+  base-folder: ${CLOUDINARY_BASE_FOLDER:PortfolioPrints}
